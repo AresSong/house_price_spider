@@ -82,10 +82,10 @@ for listing in listings:
                 listing_formatted["sell_type"] = "enquiries_over"
                 listing_formatted["price"] = str(value[0]).replace("Enquiries over $","").replace(",","").strip()
             elif value[0].find("Price by negotiatio") != -1 :
-                listing_formatted["sell_type"] = "negotiatio"
+                listing_formatted["sell_type"] = "negotiation"
                 listing_formatted["price"] = None
             elif value[0].find("To be sold by deadline") != -1 :
-                listing_formatted["sell_type"] = "solf_by_deadline"
+                listing_formatted["sell_type"] = "sold_by_deadline"
                 listing_formatted["price"] = None
             elif value[0].find("auction") != -1:
                 listing_formatted["sell_type"] = "auction"
@@ -100,10 +100,14 @@ for listing in listings:
             listing_formatted["listed_datetime"] = value
         elif key == "snapshot_datetime":
             listing_formatted["snapshot_datetime"] = value
-
+    listing_formatted["source"] = "TradeMe"
     listings_formatted.append(listing_formatted)
 
 
 
-pprint(listings_formatted)
-pprint(len(listings_formatted))
+listings_formatted = pd.DataFrame(listings_formatted)
+
+# pprint(listings_formatted)
+# pprint(len(listings_formatted))
+print(listings_formatted.head())
+print(listings_formatted.columns)

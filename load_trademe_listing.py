@@ -96,6 +96,8 @@ for url_listing in url_listings:
         if  bsObj_listing.find("a",{"id":"ClassifiedActions_AgentsListingsLink"}) is not None and \
                         bsObj_listing.find("a",{"id":"ClassifiedActions_AgentsListingsLink"}).get('href').find("4332677") != -1 :
             listing["seller"] = "Colliers International"
+        elif bsObj_listing.find("div",{"id":"ClassifiedActions_AgencyName"}) is not None:
+            listing["seller"] = bsObj_listing.find("div",{"id":"ClassifiedActions_AgencyName"}).text.strip()
         else:
             listing["seller"] = "private"
     elif bsObj_listing.find("div",{"class":"Padding"}).h2.text.find("Vendor") != -1:
