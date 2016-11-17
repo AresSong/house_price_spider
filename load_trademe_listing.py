@@ -108,7 +108,8 @@ for url_listing in url_listings:
     listing["snapshot_datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     pprint(listing)
     listings.append(listing)
-    # count = count + 1
+    print(count)
+    count = count + 1
     # if count>10:
     #     break
 

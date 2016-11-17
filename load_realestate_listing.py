@@ -139,8 +139,8 @@ for url_listing in url_listings:
     # if count >= 3:
     #     break
 
-pprint(listings)
-pprint(len(listings))
+# pprint(listings)
+# pprint(len(listings))
 
 # print(bedrooms)
 # print(bathrooms)
