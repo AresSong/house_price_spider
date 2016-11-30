@@ -94,7 +94,7 @@ for url_listing in url_listings:
 
 filename = 'trademe_listing_' +  datetime.now().strftime("%Y_%m_%d") + '.txt'
 
-with codecs.open(filename, 'w') as f:
+with codecs.open(filename, 'w',encoding="utf-8") as f:
     for i in listings:
         f.write(json.dumps(i) + "\n")
 
