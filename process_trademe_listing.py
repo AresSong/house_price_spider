@@ -30,6 +30,7 @@ def remove_letters(x):
         None
 
 for file in listing_files:
+    # print(file)
     listings = []
     with open(file, 'r') as f:
         for line in f:
@@ -82,7 +83,7 @@ for file in listing_files:
                 else:
                     listing_formatted["incorrect_address"] = ",".join(value)
             elif key == "Rooms:":
-                rooms = str(value[0])
+                rooms = str(value)
                 rooms = rooms.split(",")
                 for room in rooms:
                     if  room.find("bedroom") != -1:
@@ -125,7 +126,7 @@ for file in listing_files:
 
 
     listings_formatted = pd.DataFrame(listings_formatted)
-
+    # print(listings_formatted)
     listings_formatted["bathroom"] = listings_formatted["bathroom"].map(remove_letters)
     listings_formatted["bedroom"] = listings_formatted["bedroom"].map(remove_letters)
     listings_formatted = listings_formatted.where((pd.notnull(listings_formatted)), '')
@@ -140,4 +141,5 @@ for file in listing_files:
     #         f.write(json.dumps(i) + "\n")
     # print(listings_formatted.dtypes)
     # print((listings_formatted.loc[264]))
+
     listings_formatted.to_sql(name="load_listings", con=engine, if_exists="append")
