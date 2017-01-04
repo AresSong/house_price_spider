@@ -13,11 +13,12 @@ from selenium import webdriver
 
 listings = list()
 
-#Retrieve HTML string from the URL
-#
+
 driver = webdriver.PhantomJS(executable_path=r'C:\Users\hosxh\Documents\phantomjs-2.1.1-windows\bin\phantomjs.exe')
 url = r"http://www.trademe.co.nz/browse/categoryattributesearchresults.aspx?134=10&135=71&136=&153=&132=PROPERTY&49=0&49=0&122=0&122=0&29=&123=0&123=0&search=1&sidebar=1&cid=5748&rptpath=350-5748-"
 url_prefix = r'http://www.trademe.co.nz'
+file_folder = r'C:\Users\hosxh\Dropbox\housing_files\load_files\\'
+
 
 count = 0
 
@@ -47,7 +48,7 @@ for url_listing in url_listings:
     #url_listing = r'http://www.trademe.co.nz/property/residential-property-for-sale/auction-1209586825.htm'
 
     driver.get(url_listing)
-    time.sleep(2)
+    time.sleep(5)
     pageSource = driver.page_source
     bsObj_listing = BeautifulSoup(pageSource, "html.parser")
 
@@ -94,7 +95,7 @@ for url_listing in url_listings:
 
 filename = 'trademe_listing_' +  datetime.now().strftime("%Y_%m_%d") + '.txt'
 
-with codecs.open(filename, 'w',encoding="utf-8") as f:
+with codecs.open(file_folder+filename, 'w',encoding="utf-8") as f:
     for i in listings:
         f.write(json.dumps(i) + "\n")
 

@@ -5,7 +5,7 @@ import pandas as pd
 from pprint import pprint
 import re
 from urllib.error import HTTPError
-from selenium import webdriver
+from urllib.error import URLError
 import time
 from datetime import datetime
 import json
@@ -13,9 +13,9 @@ import codecs
 
 #300000
 #400000
-
-start = 330000
-end = 339160
+#324133
+start = 362810
+end = 390000
 
 
 ##add postal address from 339160
@@ -32,11 +32,13 @@ dump_count = 1
 while(current <= end):
     rate_info = dict()
     url = r"http://www.dunedin.govt.nz/services/rates-information/rates?ratingID=" + str(current)
+    # url = r"http://www.dunedin.govt.nz/services/rates-information/rates?ratingID=321973" + str(current)
     try:
-        # html = urlopen(r"")
-        html = urlopen(url)
-    except HTTPError as e:
-        pass
+        html = urlopen(url,timeout = 30)
+    except (URLError , HTTPError) as e:
+        continue
+
+    print(url)
 
     bsObj = BeautifulSoup(html.read(), "html.parser")
 
@@ -83,7 +85,6 @@ while(current <= end):
     if table_sale_details is not None:
         table_sale_details = table_sale_details.find("div", {"id": "ctl00_CODContent_rptRatesDetails_ctl00_rptSales_ctl00_pnlRow"})
         for i in table_sale_details.contents:
-
             if str(type(i)) != "<class 'bs4.element.NavigableString'>" and i.th is not None:
                 if i.th.text == "Gross Sale Price":
                     rate_info["gross_sale_price"] = i.td.text
@@ -92,11 +93,26 @@ while(current <= end):
                 elif i.th.text == "Settlement Date":
                     rate_info["settlement_date"] = i.td.text
 
+    table_future_Rates = bsObj.find("table", {"summary": "Future rating details"})
+    if table_future_Rates is not None:
+        for i in table_future_Rates.contents:
+            if str(type(i)) != "<class 'bs4.element.NavigableString'>" and i.th is not None:
+                #print(len(i.contents))
+                if len(i.contents) == 5: #need to change, using 5 is not properly
+                    # print(i.contents)
+                    if i.th.text == "Future rating period":
+                        rate_info["future_rating_period"] = i.td.text
+                    elif i.th.text.find("Value of improvements") != -1:
+                        rate_info["future_value_of_improvements"] = i.td.text
+                    elif i.th.text.find("Land value") != -1:
+                        rate_info["future_land_value"] = i.td.text
+                    elif i.th.text.find("Capital value") != -1:
+                        rate_info["future_capital_value"] = i.td.text
+
+
     rate_info["url"] = url
-
-
     print(current)
-    pprint(rate_info)
+    # pprint(rate_info)
     rates.append(rate_info)
 
     dump_count = dump_count + 1

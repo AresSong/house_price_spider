@@ -17,7 +17,7 @@ listings = list()
 
 url = r"http://www.realestate.co.nz/residential/all/otago/dunedin-city"
 url_prefix = r'http://www.realestate.co.nz'
-
+file_folder = r'C:\Users\hosxh\Dropbox\housing_files\load_files\\'
 
 url_listings = list()
 
@@ -56,8 +56,19 @@ for url_listing in url_listings:
         html_listing = urlopen(url_listing)
     except HTTPError as e:
         pass
-
     bsObj_listing = BeautifulSoup(html_listing.read(), "html.parser")
+
+    # check if the page is loaded correctly, if not, reload
+    while True:
+        if bsObj_listing.find("div", {"class": "headerDetails listDetailsHead"}) is not None:
+            break
+        else:
+            try:
+                # html = urlopen(r"")
+                html_listing = urlopen(url_listing)
+            except HTTPError as e:
+                pass
+            bsObj_listing = BeautifulSoup(html_listing.read(), "html.parser")
 
     ##title block
     title = ''
@@ -65,6 +76,11 @@ for url_listing in url_listings:
     listed_datetime = ''
     title = bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h1.text.strip()
     price = bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h2.text.strip()
+
+
+
+
+
     listed_datetime = bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h4.text.strip()
     listed_datetime = listed_datetime[listed_datetime.find("Listed"):]
     address_count = 1
@@ -156,7 +172,7 @@ for url_listing in url_listings:
 
 filename = 'RealEstate_listing_' +  datetime.now().strftime("%Y_%m_%d") + '.txt'
 
-with codecs.open(filename, 'w',encoding="utf-8") as f:
+with codecs.open(file_folder + filename, 'w',encoding="utf-8") as f:
     for i in listings:
         f.write(json.dumps(i) + "\n")
 
