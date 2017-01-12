@@ -73,19 +73,17 @@ for url_listing in url_listings:
     ##title block
     title = ''
     price = ''
+    street = ''
+    suburb = ''
     listed_datetime = ''
     title = bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h1.text.strip()
     price = bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h2.text.strip()
 
 
-
-
-
     listed_datetime = bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h4.text.strip()
     listed_datetime = listed_datetime[listed_datetime.find("Listed"):]
     address_count = 1
-    street = ''
-    suburb = ''
+
     for t in bsObj_listing.find("div",{"class":"headerDetails listDetailsHead"}).h3.children:
         if str(type(t)) != "<class 'bs4.element.NavigableString'>":
             if address_count == 1:
