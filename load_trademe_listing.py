@@ -13,7 +13,8 @@ from selenium import webdriver
 
 listings = list()
 
-
+load_datetime = datetime.now().strftime("%Y_%m_%d")
+snapshot_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 driver = webdriver.PhantomJS(executable_path=r'C:\Users\hosxh\Documents\phantomjs-2.1.1-windows\bin\phantomjs.exe')
 url = r"http://www.trademe.co.nz/browse/categoryattributesearchresults.aspx?134=10&135=71&136=&153=&132=PROPERTY&49=0&49=0&122=0&122=0&29=&123=0&123=0&search=1&sidebar=1&cid=5748&rptpath=350-5748-"
 url_prefix = r'http://www.trademe.co.nz'
@@ -39,11 +40,13 @@ while(1 == 1):
         url = url_prefix + bsObj.find('a', {"rel": "next"}, href=True).get('href')
         #print(url)
 
+driver.close()
 pprint(url_listings)
 
 count = 1 # only use for testing
 
 for url_listing in url_listings:
+    driver = webdriver.PhantomJS(executable_path=r'C:\Users\hosxh\Documents\phantomjs-2.1.1-windows\bin\phantomjs.exe')
     listing = dict()
     #url_listing = r'http://www.trademe.co.nz/property/residential-property-for-sale/auction-1209586825.htm'
 
@@ -84,23 +87,24 @@ for url_listing in url_listings:
     else:
         listing["seller"] = bsObj_listing.find("div",{"id":"ClassifiedActions_AgencyName"}).text
 
-    listing["snapshot_datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    listing["snapshot_datetime"] = snapshot_datetime
     listing["Location:"] = str(listing["Location:"]).split(";")
     #pprint(listing)
     listings.append(listing)
     print(count)
     count = count + 1
+    driver.close()
     # if count>1:
     #     break
 
-filename = 'trademe_listing_' +  datetime.now().strftime("%Y_%m_%d") + '.txt'
+filename = 'trademe_listing_' +  load_datetime + '.txt'
 
 with codecs.open(file_folder+filename, 'w',encoding="utf-8") as f:
     for i in listings:
         f.write(json.dumps(i) + "\n")
 
 
-driver.close()
+
 
 # pprint("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 # pprint("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

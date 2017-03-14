@@ -16,8 +16,8 @@ from sqlalchemy import create_engine
 import pyodbc
 
 
-load_folder = r"C:\Users\ares\PycharmProjects\house_price_spider\files\load_files"
-processed_folder =  r"C:\Users\ares\PycharmProjects\house_price_spider\files\processed_files"
+load_folder = r"C:\Users\hosxh\PycharmProjects\house_price_spider\files\load_files"
+processed_folder =  r"C:\Users\hosxh\PycharmProjects\house_price_spider\files\processed_files"
 load_file_matching = r"RealEstate_listing*.txt"
 
 engine = create_engine(r"mssql+pyodbc://sa:123@localhost")

@@ -11,12 +11,11 @@ import json
 import codecs
 from sqlalchemy import create_engine
 
-url = r"https://www.tki.org.nz/Schools/(page)/search-results?schoolName=&regionId=14&schoolTypeId=&schoolAuthId=&genderId=&medium=&boarding=&Search=Search"
-url_prefix = r"https://www.tki.org.nz"
+url = r"http://www.tki.org.nz/Schools/(page)/search-results?schoolName=&regionId=14&schoolTypeId=&schoolAuthId=&genderId=&medium=&boarding=&Search=Search"
+url_prefix = r"http://www.tki.org.nz"
 schools_general = list()
 search_pages = set()
 engine = create_engine(r"mssql+pyodbc://sa:123@localhost")
-
 
 search_pages.add(url)
 
@@ -28,21 +27,19 @@ except HTTPError as e:
 
 bsObj = BeautifulSoup(html.read(), "html.parser")
 
+## load urls of search pages
 for a in bsObj.find("p", {"class": "page-list"}).find_all("a"):
     if  a.get("href").strip() != "" and a.get("href").strip() is not None:
         search_pages.add(url_prefix + a.get("href"))
 
-
+## load all pages of search results
 for page in search_pages:
-
     try:
         # html = urlopen(r"")
         html = urlopen(page)
     except HTTPError as e:
         pass
-
     bsObj = BeautifulSoup(html.read(), "html.parser")
-
     for school in bsObj.find_all("div", {"class": "findSchoolSearchResult"}):
         school_general = dict()
         # print(school.h3.a.get("href"))
@@ -68,32 +65,28 @@ for page in search_pages:
     #print(school)
 
 pprint(schools_general)
-# pd.DataFrame(schools_general).to_sql(name="load_schools_general", con=engine, if_exists="append")
+pd.DataFrame(schools_general).to_sql(name="load_schools_general", con=engine, if_exists="append")
 
-# pprint(search_pages)
-# print(len(schools_general))
+# ## load school details
+schools_detail = list()
+for school_general in schools_general:
+    school_detail = dict()
+    try:
+        # html = urlopen(r"")
+        html = urlopen(school_general["tki_url"])
+    except HTTPError as e:
+        pass
+    bsObj = BeautifulSoup(html.read(), "html.parser")
+    school_detail["decile"] = bsObj.find("span", {"id": "schoolDecile"}).text.strip()
+    school_detail["authority"] = bsObj.find("span", {"id": "schoolAuthority"}).text.strip()
+    school_detail["name"] = school_general["name"]
 
+    schools_detail.append(school_detail)
 
-# ## add school details
-# schools_detail = list()
-# for school_general in schools_general:
-#     school_detail = dict()
-#     try:
-#         # html = urlopen(r"")
-#         html = urlopen(school_general["tki_url"])
-#     except HTTPError as e:
-#         pass
-#     bsObj = BeautifulSoup(html.read(), "html.parser")
-#     school_detail["decile"] = bsObj.find("span", {"id": "schoolDecile"}).text.strip()
-#     school_detail["authority"] = bsObj.find("span", {"id": "schoolAuthority"}).text.strip()
-#     school_detail["name"] = school_general["name"]
-#
-#     schools_detail.append(school_detail)
-#
-# pprint(schools_detail)
-# pd.DataFrame(schools_detail).to_sql(name="load_schools_detail", con=engine, if_exists="append")
+pprint(schools_detail)
+pd.DataFrame(schools_detail).to_sql(name="load_schools_detail", con=engine, if_exists="append")
 
-##get schools population
+## load schools population
 schools_population = list()
 for school in schools_general:
     school_population = pd.DataFrame()
@@ -108,7 +101,7 @@ for school in schools_general:
 pprint(schools_population)
 # pd.DataFrame(schools_population).to_sql(name="load_schools_population", con=engine, if_exists="append")
 
-## add school details
+## load national standards
 schools_national_standards = list()
 for school in schools_general:
     school_national_standard = pd.DataFrame()
@@ -127,7 +120,7 @@ for school in schools_general:
     reading.columns = column_name
     reading["type"] = "reading"
     reading["name"] = school["name"]
-    # print(reading)
+    print(reading)
     ## writing
     writing_url = str(school["tki_url"]).replace("school?school", "school/national/writing?school")
     #writing_url = r"https://www.tki.org.nz/Schools/(page)/school/national/writing?school=3745&district=71&region=14"
@@ -136,16 +129,17 @@ for school in schools_general:
     writing.columns = column_name
     writing["type"] = "writing"
     writing["name"] = school["name"]
-    # print(writing)
+    print(writing)
     ## mathematics
     mathematics_url = str(school["tki_url"]).replace("school?school", "school/national/writing?school")
-    mathematics_url = r"https://www.tki.org.nz/Schools/(page)/school/national/mathematics?school=3745&district=71&region=14"
+    ## testing url
+    # mathematics_url = r"https://www.tki.org.nz/Schools/(page)/school/national/mathematics?school=3745&district=71&region=14"
     mathematics = pd.read_html(mathematics_url)[0]
     mathematics = mathematics.iloc[:, 0:9]
     mathematics.columns = column_name
     mathematics["type"] = "mathematics"
     mathematics["name"] = school["name"]
-    # print(mathematics)
+    print(mathematics)
     #population_url = 'https://www.tki.org.nz/Schools/(page)/school/population/trends?school=3745&district=71&region=14'
     #school_population = pd.read_html(population_url)[0]
     #school_population["name"] = school["name"]

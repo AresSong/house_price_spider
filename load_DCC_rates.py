@@ -14,8 +14,8 @@ import codecs
 #300000
 #400000
 #324133
-start = 362810
-end = 390000
+start = 421122
+end = 421132
 
 
 ##add postal address from 339160
@@ -79,6 +79,12 @@ while(current <= end):
                             rate_info["land_value"] = sub_i.td.text
                         elif sub_i.th.text.find("Capital value") != -1 :
                             rate_info["capital_value"] = sub_i.td.text
+                        elif sub_i.th.text.find("Rating differential") != -1:
+                            rate_info["rating_differential"] = sub_i.td.text
+                        elif sub_i.th.text.find("Land use") != -1:
+                            rate_info["land use"] = sub_i.td.text
+                        elif sub_i.th.text.find("Area in hectares") != -1:
+                            rate_info["area in hectares"] = sub_i.td.text
 
 
     table_sale_details = bsObj.find("table",{"summary":"Most recent Property Sales Data"})
@@ -108,7 +114,12 @@ while(current <= end):
                         rate_info["future_land_value"] = i.td.text
                     elif i.th.text.find("Capital value") != -1:
                         rate_info["future_capital_value"] = i.td.text
-
+                    elif i.th.text.find("Rating differential") != -1:
+                        rate_info["future_rating_differential"] = i.td.text
+                    elif i.th.text.find("Land use") != -1:
+                        rate_info["future_land use"] = i.td.text
+                    elif i.th.text.find("Area in hectares") != -1:
+                        rate_info["future_area_in_hectares"] = i.td.text
 
     rate_info["url"] = url
     print(current)
@@ -116,7 +127,7 @@ while(current <= end):
     rates.append(rate_info)
 
     dump_count = dump_count + 1
-    if dump_count == 100:
+    if dump_count == 5:
         filename = 'DCC_Rates_' + str(current) + '.txt'
         with codecs.open(filename, 'w') as f:
             for i in rates:

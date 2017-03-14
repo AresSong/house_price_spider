@@ -15,7 +15,7 @@ import glob
 import os
 from sqlalchemy import create_engine
 
-load_folder = r"C:\Users\ares\PycharmProjects\house_price_spider\files\load_files"
+load_folder = r"C:\Users\hosxh\PycharmProjects\house_price_spider\files\load_files"
 load_file_matching = r"trademe_listing*.txt"
 engine = create_engine(r"mssql+pyodbc://sa:123@localhost")
 os.chdir(load_folder)

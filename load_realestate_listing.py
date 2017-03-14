@@ -14,7 +14,8 @@ listings = list()
 
 
 #Retrieve HTML string from the URL
-
+load_datetime = datetime.now().strftime("%Y_%m_%d")
+snapshot_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 url = r"http://www.realestate.co.nz/residential/all/otago/dunedin-city"
 url_prefix = r'http://www.realestate.co.nz'
 file_folder = r'C:\Users\hosxh\Dropbox\housing_files\load_files\\'
@@ -126,7 +127,7 @@ for url_listing in url_listings:
     property_description = bsObj_listing.find("div",{"class":"description detailsPage"}).text
 
     ##snapshot_datetime
-    snapshot_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    snapshot_datetime = snapshot_datetime ##datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     listing["snapshot_datetime"] = snapshot_datetime
     listing["bedrooms"] = bedrooms
@@ -168,7 +169,7 @@ for url_listing in url_listings:
 
 
 
-filename = 'RealEstate_listing_' +  datetime.now().strftime("%Y_%m_%d") + '.txt'
+filename = 'RealEstate_listing_' +  load_datetime + '.txt'
 
 with codecs.open(file_folder + filename, 'w',encoding="utf-8") as f:
     for i in listings:

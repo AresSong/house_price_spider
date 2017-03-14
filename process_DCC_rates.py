@@ -16,7 +16,7 @@ import pyodbc
 
 
 
-load_folder = r"C:\Users\ares\PycharmProjects\house_price_spider\files\DCC\working"
+load_folder = r"C:\Users\hosxh\PycharmProjects\house_price_spider\files\DCC\working"
 #processed_folder =  r"C:\Users\ares\PycharmProjects\house_price_spider\files\processed_files"
 load_file_matching = r"DCC_Rates*.txt"
 
@@ -53,11 +53,17 @@ for  file in rate_files:
             elif key == "land_value":
                 rate_formatted["land_value"] = str(value).replace(",", "")
             elif key == "property_address":
-                rate_formatted["property_address"] = str(value)
+                rate_formatted["property_address"] = " ".join(str(value).strip().split("\n"))
             elif key == "settlement_date":
                 rate_formatted["settlement_date"] = datetime.strptime(str(value),"%d %b %Y").strftime("%Y-%m-%d %H:%M:%S")
             elif key == "value_of_improvements":
                 rate_formatted["value_of_improvements"] = str(value).replace(",", "")
+            elif key == "future_capital_value":
+                rate_formatted["future_capital_value"] = str(value).replace(",", "")
+            elif key == "future_land_value":
+                rate_formatted["future_land_value"] = str(value).replace(",", "")
+            elif key == "future_value_of_improvements":
+                rate_formatted["future_value_of_improvements"] = str(value).replace(",", "")
             elif key == "payers":
                 payers = ""
                 for payer in value:
